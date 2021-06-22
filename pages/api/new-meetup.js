@@ -1,8 +1,19 @@
-function handler(req, res) {
+import { MongoClient } from "mongodb";
+
+async function handler(req, res) {
   if (req.method === "POST") {
+    console.log("RECEIVING DATA");
     const data = req.body;
 
-    const { title, image, address, description } = data;
+    const client = await MongoClient.connect(
+      "mongodb+srv://Vandal:Zastawa750@cluster0.6ifbl.mongodb.net/meetups?retryWrites=true&w=majority"
+    );
+    const db = client.db();
+
+    const meetupCollection = db.collection("meetups");
+    await meetupCollection.insertOne(data);
+    res.status(201).json({ message: "Meetup inserted" });
+    client.close();
   }
 }
 
