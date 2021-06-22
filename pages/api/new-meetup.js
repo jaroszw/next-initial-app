@@ -2,7 +2,6 @@ import { MongoClient } from "mongodb";
 
 async function handler(req, res) {
   if (req.method === "POST") {
-    console.log("RECEIVING DATA");
     const data = req.body;
 
     const client = await MongoClient.connect(
