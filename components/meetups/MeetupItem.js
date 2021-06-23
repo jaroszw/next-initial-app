@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 function MeetupItem(props) {
   const router = useRouter();
 
-  const showDetrailsHandler = () => {
+  const showDetailsHandler = () => {
     router.push("/" + props.id);
   };
 
@@ -20,7 +20,7 @@ function MeetupItem(props) {
           <address>{props.address}</address>
         </div>
         <div className={classes.actions}>
-          <button onClick={showDetrailsHandler}>Show Details</button>
+          <button onClick={showDetailsHandler}>Show Details</button>
         </div>
       </Card>
     </li>
