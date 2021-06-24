@@ -1,13 +1,25 @@
-import React from "react";
+import { MongoClient, ObjectId } from "mongodb";
+import { Fragment } from "react";
+import Head from "next/head";
+
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 
-import { MongoClient } from "mongodb";
-
-const MeetupDetails = (props) => {
-  console.log(props);
-  // const { image, title, id, address, description } = props.meetupData;
-  return <MeetupDetail />;
-};
+function MeetupDetails(props) {
+  return (
+    <Fragment>
+      <Head>
+        <title>{props.meetupData.title}</title>
+        <meta name="description" content={props.meetupData.description} />
+      </Head>
+      <MeetupDetail
+        image={props.meetupData.image}
+        title={props.meetupData.title}
+        address={props.meetupData.address}
+        description={props.meetupData.description}
+      />
+    </Fragment>
+  );
+}
 
 export async function getStaticPaths() {
   const client = await MongoClient.connect(
@@ -22,7 +34,7 @@ export async function getStaticPaths() {
   client.close();
 
   return {
-    fallback: false,
+    fallback: "blocking",
     paths: meetups.map((meetup) => ({
       params: { meetupId: meetup._id.toString() },
     })),
@@ -30,7 +42,10 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps(context) {
+  // fetch data for a single meetup
+
   const meetupId = context.params.meetupId;
+
   const client = await MongoClient.connect(
     "mongodb+srv://Vandal:Zastawa750@cluster0.6ifbl.mongodb.net/meetups?retryWrites=true&w=majority"
   );
@@ -38,15 +53,21 @@ export async function getStaticProps(context) {
 
   const meetupsCollection = db.collection("meetups");
 
-  const selectedMeetup = await meetupsCollection.find().toArray();
-
-  console.log(selectedMeetup);
+  const selectedMeetup = await meetupsCollection.findOne({
+    _id: ObjectId(meetupId),
+  });
 
   client.close();
 
   return {
     props: {
-      meetupData: null,
+      meetupData: {
+        id: selectedMeetup._id.toString(),
+        title: selectedMeetup.title,
+        address: selectedMeetup.address,
+        image: selectedMeetup.image,
+        description: selectedMeetup.description,
+      },
     },
   };
 }
