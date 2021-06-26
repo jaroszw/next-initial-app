@@ -1,9 +1,19 @@
-import React from "react";
-import { MongoClient } from "mongodb";
-import MeetupList from "../components/meetups/MeetupList";
+import React from 'react';
+import { MongoClient } from 'mongodb';
+import MeetupList from '../components/meetups/MeetupList';
+
+import Head from 'next/head';
 
 export const HomePage = (props) => {
-  return <MeetupList meetups={props.meetups} />;
+  return (
+    <React.Fragment>
+      <Head>
+        <title>React Meetups</title>
+        <meta name="description" content="Taka se stronka w nexscie" />
+      </Head>
+      <MeetupList meetups={props.meetups} />
+    </React.Fragment>
+  );
 };
 
 // export async function getServerSideProps(context) {
@@ -19,10 +29,11 @@ export const HomePage = (props) => {
 
 export async function getStaticProps() {
   const client = await MongoClient.connect(
-    "mongodb+srv://Vandal:Zastawa750@cluster0.6ifbl.mongodb.net/meetups?retryWrites=true&w=majority"
+    'mongodb+srv://Vandal:Zastawa750@cluster0.6ifbl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+    { useUnifiedTopology: true }
   );
   const db = client.db();
-  const meetupCollection = db.collection("meetups");
+  const meetupCollection = db.collection('meetups');
   const meetups = await meetupCollection.find().toArray();
   return {
     props: {
